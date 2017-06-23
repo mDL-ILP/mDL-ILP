@@ -1,2 +1,2 @@
 # mDL-PoC
-Proof of Conpect for a mobile driving license
+Proof of Concept for a mobile driving license
