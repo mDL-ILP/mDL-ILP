@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<host-apdu-service xmlns:android="http://schemas.android.com/apk/res/android"
+                   android:description="@string/hce_description"
+                   android:requireDeviceUnlock="false">
+    <aid-group android:description="@string/hce_description"
+               android:category="other">
+        <aid-filter android:name="A0000002480200"/> <!-- eDL -->
+        <aid-filter android:name="A0000002480201"/> <!-- engagement -->
+    </aid-group>
+</host-apdu-service>

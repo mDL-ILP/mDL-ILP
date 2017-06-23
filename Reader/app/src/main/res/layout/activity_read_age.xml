@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_read_age"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.ul.ts.products.mdlreader.ReadAgeActivity"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/license_image"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.75"
+        android:layout_gravity="center"
+        android:adjustViewBounds="true"
+        android:transitionName="zoom"
+        android:contentDescription="@string/license_picture" />
+
+    <!-- button background and text is set programmatically in the activity -->
+    <com.ul.ts.products.mdlreader.CircularButton
+        android:layout_weight="0.25"
+        android:layout_width="wrap_content"
+        android:layout_gravity="center"
+        android:layout_height="0dp"
+        android:textSize="60sp"
+        android:textColor="@color/white"
+        android:background="@android:color/transparent"
+        android:id="@+id/ageView" />
+
+</LinearLayout>

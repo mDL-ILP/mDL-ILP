@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="nfc_details_table_first_column_weight">25</integer>
+    <integer name="nfc_details_table_second_column_weight">25</integer>
+    <integer name="nfc_details_table_third_column_weight">45</integer>
+    <integer name="nfc_details_table_fourth_column_weight">45</integer>
+    <integer name="nfc_details_table_fifth_column_weight">60</integer>
+
+</resources>

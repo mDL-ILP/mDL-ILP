@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.preference.PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent">
+
+    <!--<android.support.v7.preference.PreferenceCategory-->
+        <!--android:title="Transfer Options">-->
+
+        <!--&lt;!&ndash; Transfer method Bluetooth or WiFiDirect &ndash;&gt;-->
+        <!--<android.support.v7.preference.ListPreference-->
+            <!--android:key="connection_preference"-->
+            <!--android:title="Transfer Method"-->
+            <!--android:entries="@array/connectionOptionNames"-->
+            <!--android:entryValues="@array/connectionOptionValues"-->
+            <!--android:defaultValue="Bluetooth"-->
+            <!--/>-->
+
+    <!--</android.support.v7.preference.PreferenceCategory>-->
+
+    <android.support.v7.preference.PreferenceCategory
+        android:title="License Options">
+
+        <!-- Update license Button -->
+        <android.support.v7.preference.Preference
+            android:title="Update License"
+            android:key="updateLicenceButton"
+            android:summary="@string/settings_update_summary"/>
+
+        <!-- Change pin Button -->
+        <android.support.v7.preference.Preference
+            android:title="Change PIN"
+            android:key="changePinButton"
+            android:summary="Change the application pin code."/>
+
+        <!-- Transfer license Button -->
+        <android.support.v7.preference.Preference
+            android:title="Transfer License"
+            android:key="transferLicenseButton"
+            android:summary="Transfer your license to another device."/>
+
+        <!-- Delete license Button -->
+        <android.support.v7.preference.Preference
+            android:title="Delete License"
+            android:key="deleteLicenseButton"
+            android:summary="Deletes all license data. WARNING: this is irreversible."/>
+
+        <!-- Delete license Button -->
+        <android.support.v7.preference.Preference
+            android:title="Software Licenses"
+            android:key="showLicensesButton"
+            android:summary="Shows Open Source licenses used in this project."/>
+
+    </android.support.v7.preference.PreferenceCategory>
+
+</android.support.v7.preference.PreferenceScreen>

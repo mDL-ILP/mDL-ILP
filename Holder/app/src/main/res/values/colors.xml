@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--<resources>-->
+    <!--<color name="colorPrimary">#3F51B5</color>-->
+    <!--<color name="colorPrimaryDark">#303F9F</color>-->
+    <!--<color name="colorAccent">#FF4081</color>-->
+<!--</resources>-->
+
+<resources>
+    <color name="colorPrimary">#fcf9f9</color>
+    <color name="colorPrimaryDark">#e76c07</color>
+    <color name="colorAccent">#ffeef2</color>
+    <color name="windowBackground">#f9f9f9</color>
+
+    <color name="white">#ffffff</color>
+
+    <color name="textColor">#333333</color>
+    <color name="textColor2">#666666</color>
+
+    <!--<color name="RDW_orange_light">#fff99441</color>-->
+    <!--<color name="RDW_orange">#ffe76f25</color>-->
+    <!--<color name="RDW_orange_dark">#ffb65506</color>-->
+    <!--<color name="RDW_orange_super_dark">#ff9d4905</color>-->
+    <!--<color name="drawer_background">#ff111111</color>-->
+</resources>

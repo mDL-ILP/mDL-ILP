@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.ul.ts.products.mdlreader">
+
+    <!-- conenction permissions -->
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+
+    <uses-permission android:name="android.permission.NFC" />
+
+    <!-- Camera permissions for scanning QR code -->
+    <uses-permission android:name="android.permission.CAMERA" />
+
+    <uses-feature android:name="android.hardware.camera" />
+    <uses-feature android:name="android.hardware.camera.autofocus" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity
+            android:name=".MainActivity"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".ContinuousCaptureActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".NFCTagActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ReadLicenseActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".PictureZoomActivity"
+            android:label="@string/title_activity_picture_zoom"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ReadAgeActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".SettingsActivity"></activity>
+        <meta-data android:name="android.nfc.disable_beam_default"
+                   android:value="true" />
+    </application>
+
+</manifest>

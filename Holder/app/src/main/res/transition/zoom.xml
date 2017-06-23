@@ -1,0 +1,14 @@
+<transitionSet xmlns:android="http://schemas.android.com/apk/res/android">
+    <changeBounds>
+        <targets>
+            <target android:targetId="@id/license_image" />
+            <target android:targetId="@id/license_imageZoom" />
+        </targets>
+    </changeBounds>
+    <changeImageTransform>
+        <targets>
+            <target android:targetId="@id/license_image" />
+            <target android:targetId="@id/license_imageZoom" />
+        </targets>
+    </changeImageTransform>
+</transitionSet>

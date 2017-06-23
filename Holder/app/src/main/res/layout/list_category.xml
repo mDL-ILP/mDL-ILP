@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- content for our list-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/categoryList"
+    style="@style/NfcDetailsTableLayout">
+
+    <ImageView
+        style="@style/NfcDetailsTableTitle"
+        android:layout_weight="@integer/nfc_details_table_first_column_weight"
+        android:scaleType="fitCenter"
+        android:src="@drawable/icon_am"
+        android:layout_height="match_parent"
+        android:id="@+id/category_icon"/>
+
+    <TextView
+        style="@style/NfcDetailsTableCell"
+        android:layout_weight="@integer/nfc_details_table_second_column_weight"
+        android:id="@+id/category_text"/>
+
+    <TextView
+        style="@style/NfcDetailsTableCell"
+        android:layout_weight="@integer/nfc_details_table_third_column_weight"
+        android:id="@+id/category_startDate"/>
+
+    <TextView
+        style="@style/NfcDetailsTableCell"
+        android:layout_weight="@integer/nfc_details_table_fourth_column_weight"
+        android:id="@+id/category_endDate"/>
+
+    <TextView
+        style="@style/NfcDetailsTableCell"
+        android:layout_weight="@integer/nfc_details_table_fifth_column_weight"
+        android:id="@+id/category_restrictions"/>
+</LinearLayout>

@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/licenseInfo"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:fillViewport="true"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:id="@+id/view_top_license"
+            android:layout_width="match_parent"
+            android:layout_height="220dp"
+            android:paddingBottom="16dp">
+
+            <ImageView
+                android:id="@+id/view_title"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:scaleType="fitXY"
+                android:src="@drawable/title_aamva_utopia" />
+
+            <ImageView
+                android:id="@+id/license_image"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:scaleType="centerInside"
+                android:transitionName="zoom"
+                android:layout_alignParentBottom="true"
+                android:layout_marginStart="16dp"
+                android:contentDescription="@string/license_picture"
+                android:elevation="3dp"/>
+
+            <ImageView
+                android:id="@+id/license_image_flag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:transitionName="zoom"
+                android:layout_alignEnd="@id/view_title"
+                android:layout_marginTop="120dp"
+                android:layout_marginEnd="16dp"
+                android:src="@drawable/icon_nl_flag"
+                android:visibility="invisible"
+                android:elevation="3dp"/>
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:baselineAligned="false">
+
+            <GridLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2.0"
+                android:columnCount="2"
+                android:useDefaultMargins="true">
+
+                <TextView
+                    android:text="@string/license_surname"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/license_surname"
+                    style="@style/NfcDetailsDataText" />
+
+                <TextView
+                    android:text="@string/license_name"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/license_firstname"
+                    style="@style/NfcDetailsDataText" />
+
+                <TextView
+                    android:text="@string/license_dob"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/license_dob"
+                    style="@style/NfcDetailsDataText" />
+
+                <TextView
+                    android:text="@string/license_birthplace"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/license_PlaceOfBirth"
+                    style="@style/NfcDetailsDataText" />
+
+                <TextView
+                    android:text="@string/license_validfrom"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/license_DateOfIssue"
+                    style="@style/NfcDetailsDataText" />
+
+                <TextView
+                    android:text="@string/license_validto"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/license_DateOfExpiry"
+                    style="@style/NfcDetailsDataText" />
+
+                <TextView
+                    android:text="@string/license_issuedby"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/license_IssuingAuthority"
+                    style="@style/NfcDetailsDataText" />
+
+                <TextView
+                    android:text="@string/license_number"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/license_DocumentNumber"
+                    style="@style/NfcDetailsDataText" />
+
+
+
+                <TextView
+                    android:text="@string/license_aa"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/license_aa"
+                    style="@style/NfcDetailsDataText" />
+
+                <TextView
+                    android:text="@string/license_pa"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/license_pa"
+                    style="@style/NfcDetailsDataText" />
+            </GridLayout>
+        </LinearLayout>
+
+        <LinearLayout style="@style/NfcDetailsTableLayout">
+
+            <View
+                style="@style/NfcDetailsTableTitle"
+                android:layout_weight="@integer/nfc_details_table_first_column_weight" />
+
+            <View
+                style="@style/NfcDetailsTableTitle"
+                android:layout_weight="@integer/nfc_details_table_second_column_weight" />
+
+            <TextView
+                style="@style/NfcDetailsTableTitle"
+                android:layout_weight="@integer/nfc_details_table_third_column_weight"
+                android:maxLines="1"
+                android:text="@string/license_validfrom" />
+
+            <TextView
+                style="@style/NfcDetailsTableTitle"
+                android:layout_weight="@integer/nfc_details_table_fourth_column_weight"
+                android:maxLines="1"
+                android:text="@string/license_validto" />
+
+            <TextView
+                style="@style/NfcDetailsTableTitle"
+                android:layout_weight="@integer/nfc_details_table_fifth_column_weight"
+                android:maxLines="1"
+                android:text="@string/license_restrictions" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/categoryList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="false"
+            android:orientation="vertical" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/license_additionalrestrictions"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/license_additionalrestrictions"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+</ScrollView>

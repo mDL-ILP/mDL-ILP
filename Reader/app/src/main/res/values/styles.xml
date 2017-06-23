@@ -1,0 +1,53 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:textColor">@color/white</item>
+
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
+    </style>
+
+    <style name="RdwFragment">
+        <item name="android:padding">10.0dip</item>
+    </style>
+
+    <style name="NfcDetailsTableTitle">
+        <item name="android:gravity">center|left</item>
+        <item name="android:paddingTop">10.0dip</item>
+        <item name="android:paddingBottom">10.0dip</item>
+        <item name="android:paddingLeft">0.0dip</item>
+        <item name="android:paddingRight">0.0dip</item>
+        <item name="android:layout_width">0.0dip</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+    <style name="NfcDetailsTableCell">
+        <item name="android:gravity">center|left</item>
+        <item name="android:padding">10.0dip</item>
+        <item name="android:layout_width">0.0dip</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="NfcDetailsTableLayout">
+        <item name="android:orientation">horizontal</item>
+        <item name="android:paddingLeft">0.0dip</item>
+        <item name="android:paddingRight">0.0dip</item>
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">40dip</item>
+    </style>
+
+    <style name="NfcDetailsDataText">
+        <item name="android:textSize">14.0dip</item>
+        <item name="android:layout_gravity">fill_horizontal</item>
+        <item name="android:layout_width">0.0dip</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="TextHeader" parent="@style/Base.TextAppearance.AppCompat.Medium.Inverse">
+        <item name="android:textColor">#ffffff</item>
+    </style>
+
+</resources>

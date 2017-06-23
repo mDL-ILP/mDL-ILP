@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.preference.PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent">
+
+    <android.support.v7.preference.PreferenceCategory
+        android:title="Options">
+
+        <!-- Update Certificates Button -->
+        <android.support.v7.preference.Preference
+            android:title="Update Certificates"
+            android:key="updateCertificatesButton"
+            android:summary="Connects to the server and updates the certificate data. Last updated DD/MM/YYYY"/>
+
+        <!-- Show licenses Button -->
+        <android.support.v7.preference.Preference
+            android:title="Software Licenses"
+            android:key="showLicensesButton"
+            android:summary="Shows Open Source licenses used in this project."/>
+    </android.support.v7.preference.PreferenceCategory>
+
+</android.support.v7.preference.PreferenceScreen>

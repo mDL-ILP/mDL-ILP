@@ -1,0 +1,99 @@
+<resources>
+    <string name="app_name">Drivers License</string>
+    <string name="hce_description">Mobile Drivers License</string>
+    <string name="hce_aid">F0010203040506</string>
+    <string name="data_key" translatable="false">mdlpoc.data</string>
+    <string name="key_key" translatable="false">mdlpoc.key</string>
+    <string name="aaprivatekey_key" translatable="false">mdlpoc.aaprivate.key</string>
+    <string name="tls_client_cert_key" translatable="false">mdlpoc.tls.client.cert</string>
+    <string name="perso_complete_key" translatable="false">perso_complete</string>
+    <string name="license_valid_to_key" translatable="false">license_valid_to</string>
+    <string name="license_is_18_key" translatable="false">license_18</string>
+    <string name="license_is_21_key" translatable="false">license_21</string>
+    <string name="license_last_updated_key" translatable="false">license_last_updated</string>
+    <string name="license_data_deleted_key" translatable="false">license_data_deleted</string>
+
+    <string name="perso_title">Personalising App</string>
+    <string name="perso_downloading">Downloading license data. Please wait..</string>
+    <string name="perso_problem_title">Personalisation Problem</string>
+    <string name="perso_problem_register">Could not register with server. Try again later.</string>
+    <string name="perso_problem_token">Failed to get registration token from server, Try again later.</string>
+    <string name="perso_problem_download">Failed to download the license data from the server, contact the enrollment centre to correct this issue.</string>
+    <string name="perso_problem_not_done">Personalisation is not complete. Please download your license data from the settings.</string>
+
+    <string name="settings_problem_download">Failed to download the license data from the server, try again later.</string>
+    <string name="settings_update_summary">Connects to the server and updates the license data.</string>
+    <string name="settings_update_summary_extra">Last updated</string>
+    <string name="settings_delete_remote_failure_title">Remote issue</string>
+    <string name="settings_delete_remote_failure_body">Could not connect to back end to revoke your license. Try again later.</string>
+    <string name="settings_delete_confirm_title">Confirm</string>
+    <string name="settings_delete_confirm_body">Are you sure you want to delete all user data?</string>
+    <string name="settings_transfer_title">Enter Transfer Token</string>
+    <string name="settings_licenses_title">Open Source Licenses</string>
+
+    <string name="pin_failure_title">Pin entry failed</string>
+    <string name="pin_failure_body">Entry failed 3 times in a row. All user data will be deleted.</string>
+
+    <string name="main_description_valid_to">Valid to</string>
+    <string name="main_description_age_default">-</string>
+    <string name="main_description_age_valid">Yes</string>
+    <string name="main_description_valid_to_missing">No license data downloaded</string>
+
+    <string name="connection_method_wifi_direct">Wi-Fi Direct</string>
+    <string name="connection_method_bluetooth">Bluetooth Low Energy</string>
+
+    <string name="connection_problem_title">Connection Problem</string>
+    <string name="connection_problem_wifi_fail">Failed to connect over Wi-Fi Direct</string>
+    <string name="connection_problem_server">Cannot reach server to get device token</string>
+
+    <string name="connection_need_coarse_location">To find the Reader device, your device needs to scan
+        for devices. To scan for devices, access to the location is required. No location information
+        will be stored.</string>
+
+    <string name="license_authProblem">Authentication problem</string>
+    <string name="license_pass">PASS</string>
+    <string name="license_fail">FAIL</string>
+
+    <string name="license_front">Front</string>
+    <string name="license_picture">Picture</string>
+    <string name="license_surname">Surname</string>
+    <string name="license_name">Forename</string>
+    <string name="license_dob">Date of birth</string>
+    <string name="license_birthplace">Birthplace</string>
+    <string name="license_validfrom">Valid from</string>
+    <string name="license_validto">Valid to</string>
+    <string name="license_issuedby">Issued by</string>
+    <string name="license_number">License number</string>
+    <string name="license_categories">Categories</string>
+    <string name="license_citizennumber"></string>
+    <string name="license_signature">Signature</string>
+    <string name="license_mrz" translatable="false"></string>
+    <string name="license_aa" translatable="false">AA</string>
+    <string name="license_pa" translatable="false">PA</string>
+
+    <string name="license_back">Back</string>
+    <string name="license_datefrom">Date from</string>
+    <string name="license_dateto">Date to</string>
+    <string name="license_restrictions"></string>
+    <string name="license_additionalrestrictions">Additional restrictions / limitations</string>
+
+    <string name="license_am" translatable="false">AM</string>
+    <string name="license_a1" translatable="false">A1</string>
+    <string name="license_a2" translatable="false">A2</string>
+    <string name="license_a" translatable="false">A</string>
+    <string name="license_b1" translatable="false">B1</string>
+    <string name="license_b" translatable="false">B</string>
+    <string name="license_c1" translatable="false">C1</string>
+    <string name="license_c" translatable="false">C</string>
+    <string name="license_d1" translatable="false">D1</string>
+    <string name="license_d" translatable="false">D</string>
+    <string name="license_be" translatable="false">BE</string>
+    <string name="license_c1e" translatable="false">C1E</string>
+    <string name="license_ce" translatable="false">CE</string>
+    <string name="license_d1e" translatable="false">D1E</string>
+    <string name="license_de" translatable="false">DE</string>
+    <string name="license_T" translatable="false">T</string>
+
+    <string name="license_not_applicable" translatable="false">-</string>
+
+</resources>

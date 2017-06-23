@@ -1,0 +1,70 @@
+<resources>
+    <string name="app_name">Drivers License Reader</string>
+
+    <string name="scan_qr_code">Scan QR</string>
+    <string name="scan_nfc_tag">Tap NFC</string>
+
+    <string name="license_progressTitle">The driving license is being loaded</string>
+    <string name="license_establish">Setting up connection</string>
+    <string name="license_efsod">Reading EF.Sod from</string>
+    <string name="license_dg1">Reading Data Group 1</string>
+    <string name="license_dg6">Reading Data Group 6</string>
+    <string name="license_dg11">Reading Data Group 11</string>
+    <string name="license_dg12">Reading Data Group 12</string>
+    <string name="license_dg13">Reading Data Group 13</string>
+
+    <string name="license_authProblem">Authentication problem</string>
+    <string name="license_pass">PASS</string>
+    <string name="license_fail">FAIL</string>
+    <string name="license_featureNotImplemented">-</string>
+
+    <string name="license_front">Front</string>
+    <string name="license_picture">Picture</string>
+    <string name="license_surname">Surname</string>
+    <string name="license_name">Forename</string>
+    <string name="license_dob">Date of birth</string>
+    <string name="license_birthplace">Birthplace</string>
+    <string name="license_validfrom">Valid from</string>
+    <string name="license_validto">Valid to</string>
+    <string name="license_issuedby">Issued by</string>
+    <string name="license_number">License number</string>
+    <string name="license_categories">Categories</string>
+    <string name="license_citizennumber">CitizenServiceNumber</string>
+    <string name="license_signature">Signature</string>
+    <string name="license_mrz" translatable="false">MRZ</string>
+    <string name="license_aa" translatable="false">AA</string>
+    <string name="license_pa" translatable="false">PA</string>
+    <string name="license_oc">Online check</string>
+
+    <string name="license_back">Back</string>
+    <string name="license_datefrom">Date from</string>
+    <string name="license_dateto">Date to</string>
+    <string name="license_restrictions">Restrictions</string>
+    <string name="license_additionalrestrictions">Additional restrictions / limitations</string>
+
+    <string name="license_am" translatable="false">AM</string>
+    <string name="license_a1" translatable="false">A1</string>
+    <string name="license_a2" translatable="false">A2</string>
+    <string name="license_a" translatable="false">A</string>
+    <string name="license_b1" translatable="false">B1</string>
+    <string name="license_b" translatable="false">B</string>
+    <string name="license_c1" translatable="false">C1</string>
+    <string name="license_c" translatable="false">C</string>
+    <string name="license_d1" translatable="false">D1</string>
+    <string name="license_d" translatable="false">D</string>
+    <string name="license_be" translatable="false">BE</string>
+    <string name="license_c1e" translatable="false">C1E</string>
+    <string name="license_ce" translatable="false">CE</string>
+    <string name="license_d1e" translatable="false">D1E</string>
+    <string name="license_de" translatable="false">DE</string>
+    <string name="license_T" translatable="false">T</string>
+
+    <string name="license_not_applicable" translatable="false">-</string>
+    <string name="title_activity_picture_zoom">PictureZoomActivity</string>
+
+    <string name="license_age">Age</string>
+    <string name="license_pa_full" translatable="false">Authentication</string>
+    <string name="transfer_cancelled">License transfer cancelled.</string>
+
+    <string name="settings_licenses_title">Open Source Licenses</string>
+</resources>
