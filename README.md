@@ -1,5 +1,4 @@
-# mDL-PoC
-mobile Driving License Interoperability Learning Platform
+# mobile Driving License Interoperability Learning Platform
 
 This platform is a learning platform for different concepts on the mobile driving license. it is meant to be used to try out different concepts and technologies for use in the mobile driving license standard, specifically for interoperability.
 It currently consists of two applications for Android, a holder and reader app. The holder app is the mobile Driving License. It can be read and verified by the reader app.
