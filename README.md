@@ -6,3 +6,8 @@ It currently consists of two applications for Android, a holder and reader app. 
 The idea of this Proof of Concept is to try out different concepts and technologies quickly. As such, there is no emphasis on security in the current version on the app. Some security concepts are either implemented or in the process of implementation, but this Proof of Concept in the current form is not meant to be a fully secure implementation of the mDL.
 
 Documentation on the different components in this Proof of Concept will follow in the upcoming weeks. Where applicable, the Proof of Concept aims to follow the draft of ISO 18013-5.
+
+The reader and holder app can be downloaded from the play store under the following links:
+https://play.google.com/store/apps/details?id=com.ul.ts.products.mdlholder    
+https://play.google.com/store/apps/details?id=com.ul.ts.products.mdlreader  
+They will be regularly updated with a build from this project.
