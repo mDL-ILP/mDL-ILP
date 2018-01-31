@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>rdw_download</key>
+	<string>Download</string>
+	<key>rdw_request_transfer_id</key>
+	<string>RequestTransferID</string>
+	<key>rdw_register</key>
+	<string>Register</string>
+	<key>rdw_endpoint_base</key>
+	<string>https://rdw-poc-mdl.westeurope.cloudapp.azure.com/RDW.MDL.SV.Backend/</string>
+	<key>show_print</key>
+	<string>true</string>
+	<key>rdw_request_token</key>
+	<string>RequestReaderToken</string>
+	<key>rdw_permit_transfer</key>
+	<string>PermitTransfer</string>
+</dict>
+</plist>
