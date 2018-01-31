@@ -68,6 +68,7 @@
     <string name="license_citizennumber"></string>
     <string name="license_signature">Signature</string>
     <string name="license_mrz" translatable="false"></string>
+    <string name="license_daysSinceUpdate">Days since update</string>
     <string name="license_aa" translatable="false">AA</string>
     <string name="license_pa" translatable="false">PA</string>
 

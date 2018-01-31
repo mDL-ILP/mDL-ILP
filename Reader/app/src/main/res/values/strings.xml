@@ -32,6 +32,7 @@
     <string name="license_citizennumber">CitizenServiceNumber</string>
     <string name="license_signature">Signature</string>
     <string name="license_mrz" translatable="false">MRZ</string>
+    <string name="license_daysSinceUpdate">Days since update</string>
     <string name="license_aa" translatable="false">AA</string>
     <string name="license_pa" translatable="false">PA</string>
     <string name="license_oc">Online check</string>

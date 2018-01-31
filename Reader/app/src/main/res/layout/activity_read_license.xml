@@ -118,7 +118,13 @@
                     android:id="@+id/license_DocumentNumber"
                     style="@style/NfcDetailsDataText" />
 
+                <TextView
+                    android:text="@string/license_daysSinceUpdate"
+                    android:textSize="14sp" />
 
+                <TextView
+                    android:id="@+id/license_DaysSinceUpdate"
+                    style="@style/NfcDetailsDataText" />
 
                 <TextView
                     android:text="@string/license_aa"

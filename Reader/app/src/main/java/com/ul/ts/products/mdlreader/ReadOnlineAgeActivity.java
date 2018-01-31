@@ -8,24 +8,28 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.Toast;
 
-import com.ul.ts.products.mdlreader.connection.RemoteConnectionException;
+import com.ul.ts.products.mdllibrary.connection.InterchangeProfileOnline;
 import com.ul.ts.products.mdlreader.data.APDUInterface;
 import com.ul.ts.products.mdlreader.data.DrivingLicence;
-import com.ul.ts.products.mdlreader.data.ReadDataScript;
 import com.ul.ts.products.mdlreader.utils.ByteUtils;
+import com.ul.ts.products.mdlreader.webapi.PartialDrivingLicense;
+import com.ul.ts.products.mdlreader.webapi.WebAPI;
 
-import java.util.Random;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class ReadAgeActivity extends AbstractLicenseActivity {
+public class ReadOnlineAgeActivity extends AbstractLicenseActivity {
 
     private final String TAG = getClass().getName();
-
+    private final ExecutorService service = Executors.newSingleThreadExecutor();
     @BindView(R.id.license_image) ImageView headshot;
     @BindView(R.id.ageView) Button ageView;
 
@@ -51,9 +55,9 @@ public class ReadAgeActivity extends AbstractLicenseActivity {
     }
 
     @Override
-    public void loadLicense(APDUInterface apduInterface) {
+    public void loadLicense(APDUInterface APDUInterfaceNotUsed) {
         progressDialog.dismiss();
-        new LoadAgeTask(this, apduInterface).execute();
+        new LoadAgeTask(this, APDUInterfaceNotUsed).execute();
     }
 
     @OnClick(R.id.license_image)
@@ -76,25 +80,40 @@ public class ReadAgeActivity extends AbstractLicenseActivity {
         @Override
         protected DrivingLicence doInBackground(Void... params) {
             try {
-                final ReadDataScript script = new ReadDataScript(apduInterface, ReadDataScript.AID_MDL);
-                publishProgress(PROGRESS_CONNECTING);
-                byte[] EFSOd = script.readFile(0x0001D, new PPC(PROGRESS_EFSOD, 512, 1, 2));
-                Log.d("EFSOd", ByteUtils.bytesToHex(EFSOd));
-                publishProgress(PROGRESS_DG6, 3);
-                byte[] DG6 = script.readFile(0x0006, new PPC(PROGRESS_DG6, 20000, 3, 95));
-                Log.d("DG6", ByteUtils.bytesToHex(DG6));
-                publishProgress(PROGRESS_DG13, 97);
-                byte[] DG15 = script.readFile(0x000F);
-                Log.d("DG15", ByteUtils.bytesToHex(DG15));
-                byte[] DG16 = script.readFile(0x0010);
-                Log.d("DG16", ByteUtils.bytesToHex(DG16));
-                byte[] rand = new byte[8];
-                new Random().nextBytes(rand);
-                Log.d("Random", ByteUtils.bytesToHex(rand));
-                byte[] responseToAuth = script.internalAuthenticate(rand);
-                Log.d("AA response", ByteUtils.bytesToHex(responseToAuth));
+                String url = ((InterchangeProfileOnline) deviceEngagement.getTransferInterchangeProfile()).URL;
 
-                licence = new DrivingLicence(DG6, DG15, DG16, EFSOd, rand, responseToAuth);
+                Callable<PartialDrivingLicense> registerTask = new WebAPI.GetLicenseTask(url);
+                Future<PartialDrivingLicense> f = service.submit(registerTask);
+
+                PartialDrivingLicense partialDrivingLicense = null;
+                try {
+                    partialDrivingLicense = f.get();
+                } catch (InterruptedException | ExecutionException e) {
+                    e.printStackTrace();
+                }
+
+
+                //Object storedLicense = PartialDrivingLicense.fromJson(getResources().openRawResource(R.raw.test_license));
+
+                PartialDrivingLicense dl = partialDrivingLicense;
+
+
+                byte[] EFSOd = dl.getEfMap().get("EF.SOd").getValue();//downloadedLicense.ef.get(1).value;
+                Log.d("EFSOd", ByteUtils.bytesToHex(EFSOd));
+
+                byte[] DG6 = dl.getEfMap().get("EF.DG6").getValue();
+                Log.d("DG6", ByteUtils.bytesToHex(DG6));
+
+                byte[] DG10 = dl.getEfMap().get("EF.DG10").getValue();
+                Log.d("DG10", ByteUtils.bytesToHex(DG10));
+
+                byte[] DG15 = dl.getEfMap().get("EF.DG15").getValue();
+                Log.d("DG15", ByteUtils.bytesToHex(DG15));
+
+                byte[] DG16 = dl.getEfMap().get("EF.DG16").getValue();
+                Log.d("DG16", ByteUtils.bytesToHex(DG16));
+
+                licence = new DrivingLicence(DG6, DG15, DG16, EFSOd);
                 activity.setLicence(licence);
 
                 publishProgress(PROGRESS_DONE, 100);

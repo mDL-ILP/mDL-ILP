@@ -14,6 +14,17 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
+import com.ul.ts.products.mdlreader.utils.NetUtils;
+import com.ul.ts.products.mdlreader.webapi.PartialDrivingLicense;
+import com.ul.ts.products.mdlreader.webapi.WebAPI;
+
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -22,6 +33,9 @@ public class MainActivity extends AppCompatActivity {
 
     @BindView(R.id.buttonQR) Button buttonQR;
     @BindView(R.id.software_version) TextView softwareVersion;
+
+
+    private final ExecutorService service = Executors.newSingleThreadExecutor();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
                 " v" + BuildConfig.VERSION_NAME +
                 " r" + BuildConfig.SVN_VERSION
         );
+        NetUtils.setUpSSL(this);
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -54,6 +69,9 @@ public class MainActivity extends AppCompatActivity {
 
     @OnClick(R.id.buttonQR)
     public void QRButtonClicked() {
+
+
+
 
         // check camera permission and start activity
         final boolean allowed = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED;

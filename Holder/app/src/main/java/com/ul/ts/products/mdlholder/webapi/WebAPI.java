@@ -387,7 +387,7 @@ public class WebAPI {
 
                 ReaderTokenRequest request = new ReaderTokenRequest();
                 request.setDeviceToken(FirebaseInstanceId.getInstance().getToken());
-                request.setPermittedDatagroups(Arrays.asList("?", "??", "???"));
+                request.setPermittedDatagroups(Arrays.asList("0001", "0006", "000A", "000B", "000F", "0010"));
 
                 restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
 

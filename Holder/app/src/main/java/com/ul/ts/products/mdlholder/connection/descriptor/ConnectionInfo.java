@@ -7,6 +7,7 @@ import com.ul.ts.products.mdlholder.connection.descriptor.compat.RemoteConnectio
 import com.ul.ts.products.mdllibrary.connection.InterchangeProfile;
 import com.ul.ts.products.mdllibrary.connection.InterchangeProfileBLE;
 import com.ul.ts.products.mdllibrary.connection.InterchangeProfileNFC;
+import com.ul.ts.products.mdllibrary.connection.InterchangeProfileOnline;
 import com.ul.ts.products.mdllibrary.connection.InterchangeProfileWD;
 
 import java.io.IOException;
@@ -80,6 +81,8 @@ public abstract class ConnectionInfo {
             return new WDConnectionInfo(((InterchangeProfileWD) ip).MAC);
         } else if (ip instanceof InterchangeProfileNFC) {
             return new NFCConnectionInfo();
+        } else if (ip instanceof InterchangeProfileOnline) {
+            return new OnlineConnectionInfo(((InterchangeProfileOnline) ip).URL);
         } else {
             throw new RuntimeException("Unknown InterchangeProfile");
         }

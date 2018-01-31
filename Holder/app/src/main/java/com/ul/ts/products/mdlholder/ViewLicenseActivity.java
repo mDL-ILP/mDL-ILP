@@ -36,6 +36,7 @@ public class ViewLicenseActivity extends AppCompatActivity {
     @BindView(R.id.license_DateOfExpiry) TextView validTo;
     @BindView(R.id.license_IssuingAuthority) TextView issuedBy;
     @BindView(R.id.license_DocumentNumber) TextView licenseNumber;
+    @BindView(R.id.license_DaysSinceUpdate) TextView daysSinceUpdate;
     //@BindView(R.id.license_RestrictionsSummary) TextView restrictions;
     //@BindView(R.id.license_Bsn) TextView bsn;
     @BindView(R.id.license_image) ImageView headshot;
@@ -85,6 +86,7 @@ public class ViewLicenseActivity extends AppCompatActivity {
             validTo.setText(licence.getDateOfExpiry());
             issuedBy.setText(licence.getIssuingAuthority());
             licenseNumber.setText(licence.getDocumentNumber());
+            daysSinceUpdate.setText(licence.getDaysSinceUpdate());
             headshot.setImageBitmap(photobm);
 
             //qrCodeContents.setText(licence.getMrz());

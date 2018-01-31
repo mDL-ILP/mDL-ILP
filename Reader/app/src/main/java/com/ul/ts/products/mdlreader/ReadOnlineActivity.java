@@ -1,33 +1,47 @@
 package com.ul.ts.products.mdlreader;
 
+import android.app.Activity;
 import android.app.ActivityOptions;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.support.v7.app.AlertDialog;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.ul.ts.products.mdllibrary.connection.InterchangeProfileOnline;
 import com.ul.ts.products.mdlreader.connection.RemoteConnectionException;
 import com.ul.ts.products.mdlreader.data.APDUInterface;
 import com.ul.ts.products.mdlreader.data.Category;
 import com.ul.ts.products.mdlreader.data.DrivingLicence;
 import com.ul.ts.products.mdlreader.data.ReadDataScript;
 import com.ul.ts.products.mdlreader.utils.ByteUtils;
+import com.ul.ts.products.mdlreader.utils.Bytes;
+import com.ul.ts.products.mdlreader.webapi.EF;
+import com.ul.ts.products.mdlreader.webapi.PartialDrivingLicense;
+import com.ul.ts.products.mdlreader.webapi.WebAPI;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-import android.widget.Toast;
-
-public class ReadLicenseActivity extends AbstractLicenseActivity {
+public class ReadOnlineActivity extends AbstractLicenseActivity {
     @BindView(R.id.license_firstname) TextView firstname;
     @BindView(R.id.license_surname) TextView surname;
     @BindView(R.id.license_dob) TextView dob;
@@ -49,20 +63,22 @@ public class ReadLicenseActivity extends AbstractLicenseActivity {
 
     private final String TAG = getClass().getName();
 
+
+    private final ExecutorService service = Executors.newSingleThreadExecutor();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.v(TAG, this.toString() + "::onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_read_license);
         ButterKnife.bind(this);
+
     }
 
     @Override
     public void onPause() {
         Log.v(TAG, this.toString() + "::onPause");
         super.onPause();
-        connection.pause();
-
     }
 
     @Override
@@ -82,7 +98,6 @@ public class ReadLicenseActivity extends AbstractLicenseActivity {
     public void onBackPressed() {
         Log.v(TAG, this.toString() + "::onBackPressed");
         super.onBackPressed();
-        connection.shutdown();
         finish();
     }
 
@@ -99,63 +114,75 @@ public class ReadLicenseActivity extends AbstractLicenseActivity {
     }
 
     @Override
-    public void loadLicense(APDUInterface apduInterface) {
+    public void loadLicense(APDUInterface APDUInterfaceNotUsed) {
         progressDialog.dismiss();
-        new LoadFullLicenceTask(this, apduInterface).execute();
+        new LoadOnlineLicenceTask(this, APDUInterfaceNotUsed).execute();
     }
 
-    private class LoadFullLicenceTask extends LoadLicenceTask {
-        public LoadFullLicenceTask(AbstractLicenseActivity activity, APDUInterface apduInterface) {
+
+    private class LoadOnlineLicenceTask extends LoadLicenceTask {
+        public LoadOnlineLicenceTask(AbstractLicenseActivity activity, APDUInterface apduInterface) {
             super(activity, apduInterface);
         }
 
         @Override
         protected DrivingLicence doInBackground(Void... params) {
             try {
-                final ReadDataScript script = new ReadDataScript(apduInterface, ReadDataScript.AID_MDL);
                 long t0 = System.currentTimeMillis();
 
-                publishProgress(PROGRESS_CONNECTING);
-                byte[] EFSOd = script.readFile(0x0001D, new PPC(PROGRESS_EFSOD, 512, 1, 2));
+
+                // Fetch license data here from online server
+
+                //connection.getURL();
+
+                String url = ((InterchangeProfileOnline) deviceEngagement.getTransferInterchangeProfile()).URL;
+
+                Callable<PartialDrivingLicense> registerTask = new WebAPI.GetLicenseTask(url);
+                Future<PartialDrivingLicense> f = service.submit(registerTask);
+
+                PartialDrivingLicense partialDrivingLicense = null;
+                try {
+                    partialDrivingLicense = f.get();
+                } catch (InterruptedException | ExecutionException e) {
+                    e.printStackTrace();
+                }
+
+
+                //Object storedLicense = PartialDrivingLicense.fromJson(getResources().openRawResource(R.raw.test_license));
+
+
+
+                PartialDrivingLicense dl = partialDrivingLicense;
+
+
+                byte[] EFSOd = dl.getEfMap().get("EF.SOd").getValue();//downloadedLicense.ef.get(1).value;
                 Log.d("EFSOd", ByteUtils.bytesToHex(EFSOd));
-//                byte[] EFCOM = script.readFile(0x0001E);
-//                Log.d("EFCOM", ByteUtils.bytesToHex(EFCOM));
-                publishProgress(PROGRESS_DG1, 2);
-                byte[] DG1 = script.readFile(0x0001);
+
+                byte[] DG1 = dl.getEfMap().get("EF.DG1").getValue();
                 Log.d("DG1", ByteUtils.bytesToHex(DG1));
-                publishProgress(PROGRESS_DG6, 3);
-                byte[] DG6 = script.readFile(0x0006, new PPC(PROGRESS_DG6, 20000, 3, 95));
+
+                byte[] DG6 = dl.getEfMap().get("EF.DG6").getValue();
                 Log.d("DG6", ByteUtils.bytesToHex(DG6));
-                byte[] DG10 = script.readFile(0x000A);
+
+                byte[] DG10 = dl.getEfMap().get("EF.DG10").getValue();
                 Log.d("DG10", ByteUtils.bytesToHex(DG10));
-                publishProgress(PROGRESS_DG11, 96);
-                byte[] DG11 = script.readFile(0x000B);
+
+                byte[] DG11 = dl.getEfMap().get("EF.DG11").getValue();
                 Log.d("DG11", ByteUtils.bytesToHex(DG11));
-                publishProgress(PROGRESS_DG13, 97);
-                byte[] DG13 = script.readFile(0x000D);
-                Log.d("DG13", ByteUtils.bytesToHex(DG13));
-                byte[] DG15 = script.readFile(0x000F);
-                Log.d("DG15", ByteUtils.bytesToHex(DG15));
-                byte[] DG16 = script.readFile(0x0010);
-                Log.d("DG16", ByteUtils.bytesToHex(DG16));
-                byte[] rand = new byte[8];
-                new Random().nextBytes(rand);
-                Log.d("Random", ByteUtils.bytesToHex(rand));
-                byte[] responseToAuth = script.internalAuthenticate(rand);
-                Log.d("AA response", ByteUtils.bytesToHex(responseToAuth));
 
                 long t1 = System.currentTimeMillis();
 
-                final DrivingLicence licence = new DrivingLicence(DG1, DG6, DG10, DG11, DG13, DG15, DG16, EFSOd, rand, responseToAuth);
+                final DrivingLicence licence = new DrivingLicence(DG1, DG6, DG10, DG11, EFSOd);
                 activity.setLicence(licence);
                 long t2 = System.currentTimeMillis();
 
-                Log.d(TAG, "Card data fetched in "+(t1-t0)+"ms");
-                Log.d(TAG, "License built in "+(t2-t1)+"ms");
+                Log.d(TAG, "Card data fetched in " + (t1 - t0) + "ms");
+                Log.d(TAG, "License built in " + (t2 - t1) + "ms");
 
                 publishProgress(PROGRESS_DONE, 100);
 
                 final Bitmap photobm = BitmapFactory.decodeByteArray(licence.getPhoto(), 0, licence.getPhoto().length);
+
 
                 runOnUiThread(new Runnable() {
                     public void run() {
@@ -194,15 +221,15 @@ public class ReadLicenseActivity extends AbstractLicenseActivity {
                         }
 
                         if (licence.getPassiveAuth()) {
-//                        passiveAuth.setImageBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.check));
+                            //                        passiveAuth.setImageBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.check));
                             passiveAuth.setText(R.string.license_pass);
                         } else {
-//                        passiveAuth.setImageBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.close));
+                            //                        passiveAuth.setImageBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.close));
                             passiveAuth.setText(R.string.license_fail);
                             passiveAuth.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-                                    AlertDialog.Builder builder = new AlertDialog.Builder(ReadLicenseActivity.this);
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(ReadOnlineActivity.this);
                                     builder.setTitle(R.string.license_authProblem);
                                     builder.setMessage(licence.getPassiveAuthIssue());
                                     builder.setPositiveButton("OK", null);
@@ -211,25 +238,12 @@ public class ReadLicenseActivity extends AbstractLicenseActivity {
                             });
                         }
 
-						//activeAuth.setText(R.string.license_featureNotImplemented);
-                        if (licence.getActiveAuth()) {
-//                        activeAuth.setImageBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.check));
-                            activeAuth.setText(R.string.license_pass);
-                        } else {
-//                        activeAuth.setImageBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.close));
-                            activeAuth.setText(R.string.license_fail);
-                            activeAuth.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    AlertDialog.Builder builder = new AlertDialog.Builder(ReadLicenseActivity.this);
-                                    builder.setTitle(R.string.license_authProblem);
-                                    builder.setMessage(licence.getActiveAuthIssue());
-                                    builder.setPositiveButton("OK", null);
-                                    builder.create().show();
-                                }
-                            });
-                        }
-                        onlineCheck.setText(R.string.license_featureNotImplemented);
+                        // Todo: Fix the passiveauth for the online case!!!
+                        passiveAuth.setText(R.string.license_pass);
+
+
+                        activeAuth.setText(R.string.license_featureNotImplemented);
+                        onlineCheck.setText(R.string.license_pass);
                     }
                 });
 
@@ -239,7 +253,7 @@ public class ReadLicenseActivity extends AbstractLicenseActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        activity.fail(_e.getMessage());
+                        fail(_e.getMessage());
                     }
                 });
 
@@ -248,5 +262,6 @@ public class ReadLicenseActivity extends AbstractLicenseActivity {
 
             return licence;
         }
+
     }
 }

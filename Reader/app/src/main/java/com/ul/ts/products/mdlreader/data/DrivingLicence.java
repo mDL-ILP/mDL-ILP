@@ -32,8 +32,12 @@ import java.security.cert.CertificateNotYetValidException;
 import java.security.cert.X509Certificate;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
 
@@ -82,6 +86,20 @@ public class DrivingLicence {
     // DG6 Photo
     private byte[] photo;
 
+    // DG10
+    // 5F41
+    private String formFactor;
+    // 5F42
+    private String upToDatePolicyVersion;
+    // 5F43
+    private String upToDatePolicyLast;
+    // 5F44
+    private int upToDatePolicyInterval;
+    // 5F45
+    private int upToDatePolicyLimit;
+    // daysSinceUpdate
+    private String daysSinceUpdate;
+
     // QR
     private Bitmap qr;
 
@@ -98,6 +116,7 @@ public class DrivingLicence {
     // Hashes
     private byte[] hashDG1;
     private byte[] hashDG6;
+    private byte[] hashDG10;
     private byte[] hashDG11;
     private byte[] hashDG13;
     private byte[] hashDG15;
@@ -107,6 +126,7 @@ public class DrivingLicence {
     // checks
     private boolean PassiveAuthDG1;
     private boolean PassiveAuthDG6;
+    private boolean PassiveAuthDG10;
     private boolean PassiveAuthDG11;
     private boolean PassiveAuthDG13;
     private boolean PassiveAuthDG15;
@@ -122,6 +142,8 @@ public class DrivingLicence {
     // If GAT isSample is true, if production isSample is false
     private boolean isSample;
     private String issuerDn;
+
+    private DateFormat dg10Format = new SimpleDateFormat("yyyyMMddhhmmss");
 
     private enum PictureType {PHOTO, SIGNATURE}
 
@@ -147,16 +169,18 @@ public class DrivingLicence {
     }
 
     // constructor with all checks
-    public DrivingLicence(byte[] DG1, byte[] DG6,
+    public DrivingLicence(byte[] DG1, byte[] DG6, byte[] DG10,
                           byte[] DG11, byte[] DG13, byte[] DG15, byte[] DG16, byte[] EFSOd,
                           byte[] randomForAA, byte[] responseToInternalAuth/*, String mrz*/) {
         parseDG1(DG1);
 
         parsePicture(DG6, PictureType.PHOTO);
+        parseDG10(DG10);
         parseDG11(DG11);
 
         hashDG1 = calculateHash(DG1);
         hashDG6 = calculateHash(DG6);
+        hashDG10 = calculateHash(DG10);
         hashDG11 = calculateHash(DG11);
         hashDG13 = calculateHash(DG13);
         hashDG15 = calculateHash(DG15);
@@ -173,6 +197,48 @@ public class DrivingLicence {
         Log.d("PassiveAuth", String.valueOf(this.PassiveAuth));
         Log.d("ActiveAuth", String.valueOf(this.ActiveAuth));
     }
+
+    // Online full license
+    public DrivingLicence(byte[] DG1, byte[] DG6, byte[] DG10,
+                          byte[] DG11, byte[] EFSOd) {
+        parseDG1(DG1);
+
+        parsePicture(DG6, PictureType.PHOTO);
+        parseDG10(DG10);
+        parseDG11(DG11);
+
+        hashDG1 = calculateHash(DG1);
+        hashDG6 = calculateHash(DG6);
+        hashDG10 = calculateHash(DG10);
+        hashDG11 = calculateHash(DG11);
+        hashEFSOd = calculateHash(EFSOd);
+
+        parseEFSOd(EFSOd);
+        passiveAuth();
+
+
+        Log.d("PassiveAuth", String.valueOf(this.PassiveAuth));
+    }
+
+    // Online age license
+    public DrivingLicence(byte[] DG6,
+                          byte[] DG15, byte[] DG16, byte[] EFSOd) {
+
+        parsePicture(DG6, PictureType.PHOTO);
+
+        hashDG6 = calculateHash(DG6);
+        hashDG15 = calculateHash(DG15);
+        hashDG16 = calculateHash(DG16);
+        hashEFSOd = calculateHash(EFSOd);
+
+        parseDG15(DG15);
+        parseDG16(DG16);
+        parseEFSOd(EFSOd);
+
+        passiveAuthShort();
+        Log.d("PassiveAuth", String.valueOf(this.PassiveAuth));
+    }
+
 
     private void parseDG1(byte[] DG1) {
         try {
@@ -301,6 +367,66 @@ public class DrivingLicence {
                 this.signature = image;
             default:
                 // Something went wrong
+        }
+    }
+
+    private void parseDG10(byte[] DG10) {
+        try {
+            ASN1InputStream bIn = new ASN1InputStream(DG10);
+            org.bouncycastle.asn1.DERApplicationSpecific app = (DERApplicationSpecific) bIn.readObject();
+
+
+            ASN1Sequence seq = (ASN1Sequence) app.getObject(BERTags.SEQUENCE);
+            Enumeration secEnum = seq.getObjects();
+            while (secEnum.hasMoreElements()) {
+                ASN1Primitive seqObj = (ASN1Primitive) secEnum.nextElement();
+                byte[] data = seqObj.getEncoded();
+                if (data[0]== 0x5F) {
+
+                    if (data[1] == 0x41) { // iDL form factor, mobile, binary encoded
+                        String formFactorString = Bytes.hexString(Bytes.allButFirst(data, 3));
+                        Log.d(getClass().getName(), "formFactorString: "+formFactorString);
+                        this.set5F41(formFactorString);
+                    }
+                    else if (data[1] == 0x42) { // Up to data policy version, binary encoded
+                        String policyVersion = Bytes.hexString(Bytes.allButFirst(data, 3));
+                        Log.d(getClass().getName(), "upToDatePolicyVersion: "+policyVersion);
+                        this.set5F42(policyVersion);
+                    }
+                    else if (data[1] == 0x43) { // Last update timestamp, encoded as yyyyMMddhhmmss
+                        String timestampString = Bytes.unspacedHexString(Bytes.allButFirst(data, 3));
+                        try {
+                            Log.d(getClass().getName(), "upToDatePolicyLast: "+timestampString);
+                            this.set5F43(timestampString);
+
+                            // Todo: when we change the server side to UTC, update this to localtime
+                            Date date =  dg10Format.parse(timestampString);
+                            long timeDiffMillies = (new java.util.Date()).getTime() - date.getTime();
+                            long timeDiffDays = timeDiffMillies / 86400000;
+                            this.setDaysSinceUpdate(Long.toString(timeDiffDays));
+
+                        } catch (ParseException e) {
+                            Log.e(getClass().getName(), e.getMessage(), e);
+                        }
+                    }
+                    else if (data[1] == 0x44) { // Up to date default interval, in days since last update, binary encoded
+                        String daysString = Bytes.hexString(Bytes.allButFirst(data, 3));
+                        int days = Bytes.bytesToInt(Bytes.allButFirst(data, 3));
+                        Log.d(getClass().getName(), "upToDatePolicyInterval: "+days);
+                        this.set5F44(days);
+                    }
+                    else if (data[1] == 0x45) { // Date to be updated, in days since last update, binary encoded
+                        String daysString = Bytes.hexString(Bytes.allButFirst(data, 3));
+                        int days = Bytes.bytesToInt(Bytes.allButFirst(data, 3));
+                        Log.d(getClass().getName(), "upToDatePolicyLimit: "+days);
+                        this.set5F45(days);
+                    }
+                }
+            }
+            bIn.close();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
     }
 
@@ -592,6 +718,12 @@ public class DrivingLicence {
         return result;
     }
 
+    public String getDaysSinceUpdate() {
+        if (this.daysSinceUpdate == null)
+            return "-";
+        return daysSinceUpdate;
+    }
+
     // MRZ
     public String getMrz() {
         if (this.mrz == null)
@@ -732,6 +864,36 @@ public class DrivingLicence {
         Log.d("BSN",new String(input));
         this.bsn = new String(input);
     }
+
+    // 5F41 formFactor
+    public void set5F41(String formFactor) {
+        this.formFactor = formFactor;
+    }
+
+    // 5F42 upToDatePolicyVersion
+    public void set5F42(String upToDatePolicyVersion) {
+        this.upToDatePolicyVersion = upToDatePolicyVersion;
+    }
+
+    // 5F43 upToDatePolicyLast
+    public void set5F43(String upToDatePolicyLast) {
+        this.upToDatePolicyLast = upToDatePolicyLast;
+    }
+
+    // 5F44 upToDatePolicyInterval
+    public void set5F44(int upToDatePolicyInterval) {
+        this.upToDatePolicyInterval = upToDatePolicyInterval;
+    }
+
+    // 5F45 upToDatePolicyLimit
+    public void set5F45(int upToDatePolicyLimit) {
+        this.upToDatePolicyLimit = upToDatePolicyLimit;
+    }
+
+    public void setDaysSinceUpdate(String daysSinceUpdate) {
+        this.daysSinceUpdate = daysSinceUpdate;
+    }
+
     // QR
     public void setQRandMRZ(String input) {
         Log.d("mrz",input);
@@ -1001,6 +1163,13 @@ public class DrivingLicence {
                 this.PassiveAuthDG6 = false;
             }
                 Log.d("PassiveAuthDG6", String.valueOf(PassiveAuthDG6));
+                break;
+            case 0x0a:	if (Arrays.equals(hashFromEFSOd, hashDG10)) {
+                this.PassiveAuthDG10 = true;
+            } else {
+                this.PassiveAuthDG10 = false;
+            }
+                Log.d("PassiveAuthDG10", String.valueOf(PassiveAuthDG10));
                 break;
             case 0x0b:	if (Arrays.equals(hashFromEFSOd, hashDG11)) {
                 this.PassiveAuthDG11 = true;

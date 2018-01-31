@@ -4,7 +4,7 @@ public class EF {
 
     private String id;
     private String name;
-    private String value;
+    private byte[] value;
 
     public String getId() {
         return id;
@@ -22,11 +22,11 @@ public class EF {
         this.name = name;
     }
 
-    public String getValue() {
+    public byte[] getValue() {
         return value;
     }
 
-    public void setValue(String value) {
+    public void setValue(byte[] value) {
         this.value = value;
     }
 }

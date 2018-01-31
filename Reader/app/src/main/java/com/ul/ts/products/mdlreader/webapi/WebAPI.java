@@ -31,7 +31,7 @@ public class WebAPI {
         }
     }
 
-    private class GetLicenseTask implements Callable<PartialDrivingLicense> {
+    public static class GetLicenseTask implements Callable<PartialDrivingLicense> {
 
         private final String license;
 

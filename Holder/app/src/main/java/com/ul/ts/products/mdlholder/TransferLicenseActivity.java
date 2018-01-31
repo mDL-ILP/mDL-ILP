@@ -3,6 +3,7 @@ package com.ul.ts.products.mdlholder;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Messenger;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -15,6 +16,7 @@ import com.ul.ts.products.mdlholder.connection.descriptor.Engagement;
 import com.ul.ts.products.mdlholder.connection.descriptor.TransferInfo;
 import com.ul.ts.products.mdlholder.connection.hce.MdlApduService;
 import com.ul.ts.products.mdlholder.connection.hce.ReceivingHandler;
+import com.ul.ts.products.mdlholder.utils.ByteUtils;
 import com.ul.ts.products.mdlholder.utils.ConnectionPreference;
 
 import java.math.BigInteger;
@@ -43,6 +45,7 @@ public class TransferLicenseActivity extends AbstractTransferActivity {
         SecureRandom random = new SecureRandom();
         String password = new BigInteger(130, random).toString(32);
 
+        // TODO: don't make an MDLSim for the online version
         MDLSim mdlSim = new MDLSim(this, fullAccess, password);
 
         TransferInfo transferInfo;
@@ -100,6 +103,7 @@ public class TransferLicenseActivity extends AbstractTransferActivity {
                     });
                 }
             }).start();
+            Log.d("QR string", ByteUtils.bytesToHex(engagement.getContents()));
         }
 
         if (engagement.engageNFC()) {

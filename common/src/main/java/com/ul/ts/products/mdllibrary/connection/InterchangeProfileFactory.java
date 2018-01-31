@@ -19,6 +19,7 @@ public class InterchangeProfileFactory {
         uuidMap.put(InterchangeProfileBLE.profileUUID, InterchangeProfileBLE.class);
         uuidMap.put(InterchangeProfileWD.profileUUID, InterchangeProfileWD.class);
         uuidMap.put(InterchangeProfileNFC.profileUUID, InterchangeProfileNFC.class);
+        uuidMap.put(InterchangeProfileOnline.profileUUID, InterchangeProfileOnline.class);
     }
 
     public static InterchangeProfile build(TLVData tlv) throws IOException {

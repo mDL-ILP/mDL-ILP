@@ -5,7 +5,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import com.ul.ts.products.mdllibrary.connection.DeviceEngagement;
+import com.ul.ts.products.mdllibrary.connection.InterchangeProfile;
 import com.ul.ts.products.mdllibrary.connection.InterchangeProfileInterfaceIndependent;
+import com.ul.ts.products.mdllibrary.connection.InterchangeProfileOnline;
 import com.ul.ts.products.mdllibrary.connection.TLVData;
 
 abstract class EngagementActivity extends AppCompatActivity {
@@ -26,7 +28,14 @@ abstract class EngagementActivity extends AppCompatActivity {
         InterchangeProfileInterfaceIndependent ipii = deviceEngagement.getInterfaceIndependentProfile();
         Intent intent;
 
-        if (ipii.dataMinimizationParameter.ageLimited()) {
+
+        // Check if we need to start the online version: todo: change this
+        final InterchangeProfile transferInterchange = deviceEngagement.getTransferInterchangeProfile();
+        if (transferInterchange instanceof InterchangeProfileOnline && ipii.dataMinimizationParameter.ageLimited()){
+            intent = new Intent(this, ReadOnlineAgeActivity.class);
+        } else if (transferInterchange instanceof InterchangeProfileOnline) {
+            intent = new Intent(this, ReadOnlineActivity.class);
+        } else if (ipii.dataMinimizationParameter.ageLimited()) {
             intent = new Intent(this, ReadAgeActivity.class);
         } else {
             intent = new Intent(this, ReadLicenseActivity.class);

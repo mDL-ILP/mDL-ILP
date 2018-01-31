@@ -1,6 +1,5 @@
 package com.ul.ts.products.mdlholder.data;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.Log;
 
@@ -14,6 +13,7 @@ import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.BERTags;
 import org.bouncycastle.asn1.DERApplicationSpecific;
 import org.bouncycastle.asn1.DLSequence;
+import org.bouncycastle.asn1.cms.SignedData;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -41,6 +41,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -79,6 +80,9 @@ public class DrivingLicence {
     // 5F0F
     private String placeOfResidence;
 
+
+
+
     // 7F 63 - Categories
     private List<Category> categories;
 
@@ -86,6 +90,20 @@ public class DrivingLicence {
     private byte[] signature;
     // DG6 Photo
     private byte[] photo;
+
+    // DG10
+    // 5F41
+    private String formFactor;
+    // 5F42
+    private String upToDatePolicyVersion;
+    // 5F43
+    private String upToDatePolicyLast;
+    // 5F44
+    private int upToDatePolicyInterval;
+    // 5F45
+    private int upToDatePolicyLimit;
+    // daysSinceUpdate
+    private String daysSinceUpdate;
 
     // QR
     private Bitmap qr;
@@ -125,7 +143,7 @@ public class DrivingLicence {
     // AA PublicKey
     private PublicKey aaPublicKey;
     // EFSOd content
-    private byte[] idsSecurityObject;
+    private byte[] ldsSecurityObject;
 
     private String issuerDn;
 
@@ -161,6 +179,7 @@ public class DrivingLicence {
         parseDG15(DG15);
         parseDG16(DG16);
         parseEFSOd(EFSOd);
+        passiveCMSAuth(EFSOd); //Test function for using the CMS library
         passiveAuth();
         activeAuth(randomForAA, responseToInternalAuth);
 
@@ -303,17 +322,26 @@ public class DrivingLicence {
 
                     if (data[1] == 0x41) { // iDL form factor, mobile, binary encoded
                         String formFactorString = Bytes.hexString(Bytes.allButFirst(data, 3));
-                        Log.d(getClass().getName(), "0x41: "+formFactorString);
+                        Log.d(getClass().getName(), "formFactorString: "+formFactorString);
+                        this.set5F41(formFactorString);
                     }
                     else if (data[1] == 0x42) { // Up to data policy version, binary encoded
                         String policyVersion = Bytes.hexString(Bytes.allButFirst(data, 3));
-                        Log.d(getClass().getName(), "0x42: "+policyVersion);
+                        Log.d(getClass().getName(), "upToDatePolicyVersion: "+policyVersion);
+                        this.set5F42(policyVersion);
                     }
                     else if (data[1] == 0x43) { // Last update timestamp, encoded as yyyyMMddhhmmss
                         String timestampString = Bytes.unspacedHexString(Bytes.allButFirst(data, 3));
                         try {
+                            Log.d(getClass().getName(), "upToDatePolicyLast: "+timestampString);
+                            this.set5F43(timestampString);
+
+                            // Todo: when we change the server side to UTC, update this to localtime
                             Date date =  dg10Format.parse(timestampString);
-                            // TODO(JS): Do something with the date?
+                            long timeDiffMillies = (new java.util.Date()).getTime() - date.getTime();
+                            long timeDiffDays = timeDiffMillies / 86400000;
+                            this.setDaysSinceUpdate(Long.toString(timeDiffDays));
+
                         } catch (ParseException e) {
                             Log.e(getClass().getName(), e.getMessage(), e);
                         }
@@ -321,12 +349,14 @@ public class DrivingLicence {
                     else if (data[1] == 0x44) { // Up to date default interval, in days since last update, binary encoded
                         String daysString = Bytes.hexString(Bytes.allButFirst(data, 3));
                         int days = Bytes.bytesToInt(Bytes.allButFirst(data, 3));
-                        Log.d(getClass().getName(), "0x44 "+days);
+                        Log.d(getClass().getName(), "upToDatePolicyInterval: "+days);
+                        this.set5F44(days);
                     }
                     else if (data[1] == 0x45) { // Date to be updated, in days since last update, binary encoded
                         String daysString = Bytes.hexString(Bytes.allButFirst(data, 3));
                         int days = Bytes.bytesToInt(Bytes.allButFirst(data, 3));
-                        Log.d(getClass().getName(), "0x45 "+days);
+                        Log.d(getClass().getName(), "upToDatePolicyLimit: "+days);
+                        this.set5F45(days);
                     }
                 }
             }
@@ -467,8 +497,8 @@ public class DrivingLicence {
                     parseEFSOd(data);
                 } else if (data[0] == (byte)0x04) {
                     Log.d("start", "04");
-                    Log.d("IdsSecurityObject", ByteUtils.bytesToHex(data));
-                    this.idsSecurityObject = Arrays.copyOfRange(data, 4, data.length);
+                    Log.d("ldsSecurityObject", ByteUtils.bytesToHex(data));
+                    this.ldsSecurityObject = Arrays.copyOfRange(data, 4, data.length);
                 } else if (data[0] == (byte)0x06) {
                     Log.d("start", "06");
                     Log.d("OID", ByteUtils.bytesToHex(data));
@@ -604,6 +634,12 @@ public class DrivingLicence {
 				result = result + "-" + cat.getRestrictions();
 		}*/
         return result;
+    }
+
+    public String getDaysSinceUpdate() {
+        if (this.daysSinceUpdate == null)
+            return "-";
+        return daysSinceUpdate;
     }
 
     // MRZ
@@ -749,6 +785,36 @@ public class DrivingLicence {
         Log.d("BSN",new String(input));
         this.bsn = new String(input);
     }
+
+    // 5F41 formFactor
+    public void set5F41(String formFactor) {
+        this.formFactor = formFactor;
+    }
+
+    // 5F42 upToDatePolicyVersion
+    public void set5F42(String upToDatePolicyVersion) {
+        this.upToDatePolicyVersion = upToDatePolicyVersion;
+    }
+
+    // 5F43 upToDatePolicyLast
+    public void set5F43(String upToDatePolicyLast) {
+        this.upToDatePolicyLast = upToDatePolicyLast;
+    }
+
+    // 5F44 upToDatePolicyInterval
+    public void set5F44(int upToDatePolicyInterval) {
+        this.upToDatePolicyInterval = upToDatePolicyInterval;
+    }
+
+    // 5F45 upToDatePolicyLimit
+    public void set5F45(int upToDatePolicyLimit) {
+        this.upToDatePolicyLimit = upToDatePolicyLimit;
+    }
+
+    public void setDaysSinceUpdate(String daysSinceUpdate) {
+        this.daysSinceUpdate = daysSinceUpdate;
+    }
+
     // QR
 //    public void setQRandMRZ(String input) {
 //        Log.d("mrz",input);
@@ -839,6 +905,15 @@ public class DrivingLicence {
         return hash;
     }
 
+    private void passiveCMSAuth(byte[] EFSOd) {
+        Log.d("CMS parser","Started");
+        Log.d("CMS parser efsod", ByteUtils.bytesToHex(EFSOd));
+        //CMSSignedData signedData = new CMSSignedData(EFSOd);
+        //Store certStore = signedData.getCertificates();
+        //
+
+    }
+
     private void passiveAuth() {
         boolean dsCertVerified = verifyDSCert();
         Log.d("dsCertVerified", String.valueOf(dsCertVerified));
@@ -846,7 +921,7 @@ public class DrivingLicence {
             boolean signatureCorrect = verifySignature();
             Log.d("signatureCorrect", String.valueOf(signatureCorrect));
             if (signatureCorrect) {
-                this.parseIdsSecurityObject(idsSecurityObject);
+                this.parseldsSecurityObject(ldsSecurityObject);
                 if (this.PassiveAuthDG1 &&
                         this.PassiveAuthDG6 &&
                         this.PassiveAuthDG10 &&
@@ -928,6 +1003,7 @@ public class DrivingLicence {
     }
 
     private boolean verifySignature() {
+        // TODO Make these checks a more robust, possibly copy code from the eMRTD tooling, that tooling have all checks implemented
         // i. Extract signature and algorithm from EFSOd
         // TODO in parseEFSOd
         // ii. Verify/Decrypt with DS public key
@@ -940,18 +1016,20 @@ public class DrivingLicence {
 
         // vi. Extract AttributeValue from signedAttrs
 
-        // vii. Extract eContent (=IdsSecurityObject) from EFSOd
+        // vii. Extract eContent (=ldsSecurityObject) from EFSOd
         // Done in parseEFSOd
         // viii. Calculate hash voor eContent
-        byte[] hashIdsSecurityObject = this.calculateHash(idsSecurityObject);
+        byte[] hashldsSecurityObject = this.calculateHash(ldsSecurityObject);
         // ix. Compare hashes
+
+        // Implement bouncy castle, cmssigneddata
 
         return true;
     }
 
-    private void parseIdsSecurityObject(byte[] idsSecurityObject) {
+    private void parseldsSecurityObject(byte[] ldsSecurityObject) {
         try {
-            ASN1InputStream bIn = new ASN1InputStream(idsSecurityObject);
+            ASN1InputStream bIn = new ASN1InputStream(ldsSecurityObject);
             ASN1Primitive obj = bIn.readObject();
             ASN1Sequence seq;
             //org.bouncycastle.asn1.DERApplicationSpecific app = (DERApplicationSpecific) obj;
@@ -965,7 +1043,7 @@ public class DrivingLicence {
                 Log.d("data", ByteUtils.bytesToHex(data));
                 if (data[0] == (byte)0x30) {
                     Log.d("start", "30");
-                    parseIdsSecurityObject(data);
+                    parseldsSecurityObject(data);
                 } else if (data[0] == (byte)0x02) {
                     Log.d("start", "02");
                     dg = data[2];
@@ -978,7 +1056,7 @@ public class DrivingLicence {
                 } else {
                     Log.d("start", "other");
                     Log.d("other", ByteUtils.bytesToHex(data));
-                    parseIdsSecurityObject(data);
+                    parseldsSecurityObject(data);
                 }
             }
             bIn.close();

@@ -169,6 +169,8 @@ public class MainActivity extends AppCompatActivity {
                 return getString(R.string.connection_method_bluetooth);
             case ConnectionPreference.NFC:
                 return "Near-Field Communication";
+            case ConnectionPreference.ONLINE:
+                return "Online";
             default:
                 return "Unknown";
         }

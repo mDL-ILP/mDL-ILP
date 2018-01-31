@@ -8,17 +8,22 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.widget.Toast;
 
 import com.ul.ts.products.mdllibrary.connection.DataMinimizationParameter;
 import com.ul.ts.products.mdllibrary.connection.DeviceEngagement;
 import com.ul.ts.products.mdllibrary.connection.InterchangeProfile;
 import com.ul.ts.products.mdllibrary.connection.InterchangeProfileBLE;
 import com.ul.ts.products.mdllibrary.connection.InterchangeProfileNFC;
+import com.ul.ts.products.mdllibrary.connection.InterchangeProfileOnline;
 import com.ul.ts.products.mdllibrary.connection.InterchangeProfileWD;
 import com.ul.ts.products.mdllibrary.connection.TLVData;
 import com.ul.ts.products.mdlreader.connection.RemoteConnection;
+import com.ul.ts.products.mdlreader.connection.RemoteConnectionException;
 import com.ul.ts.products.mdlreader.connection.bluetooth.BLEConnection;
 import com.ul.ts.products.mdlreader.connection.hce.NFCLicenseTransferConnection;
+import com.ul.ts.products.mdlreader.connection.online.OnlineConnection;
 import com.ul.ts.products.mdlreader.connection.wifi.WiFiDirectConnection;
 import com.ul.ts.products.mdlreader.data.APDUInterface;
 import com.ul.ts.products.mdlreader.data.DrivingLicence;
@@ -26,7 +31,8 @@ import com.ul.ts.products.mdlreader.data.DrivingLicence;
 import java.io.IOException;
 
 public abstract class AbstractLicenseActivity extends AppCompatActivity {
-
+    private static final String TAG = "AbstractLicenseActivity";
+    protected boolean isDoneLoading = false;
     protected ProgressDialog progressDialog;
     protected DeviceEngagement deviceEngagement;
     protected DataMinimizationParameter dataMinimizationParameter;
@@ -34,6 +40,31 @@ public abstract class AbstractLicenseActivity extends AppCompatActivity {
     protected DrivingLicence licence;
 
     public abstract void loadLicense(APDUInterface apduInterface);
+
+
+    @Override
+    protected void onResume() {
+        Log.v(TAG, this.toString() + "::onResume");
+        super.onResume();
+        if (!isDoneLoading) {
+            resumeConnection();
+        }
+    }
+
+    protected void resumeConnection() {
+        try {
+            connection.runSetupSteps();
+            connection.resume();
+            connection.findPeers();
+        } catch (RemoteConnectionException e) {
+            Log.d(TAG, "Could not setup connection", e);
+            if (e.retry) {
+                Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
+            } else {
+                fail(e.getMessage());
+            }
+        }
+    };
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -59,6 +90,8 @@ public abstract class AbstractLicenseActivity extends AppCompatActivity {
             connection = new NFCLicenseTransferConnection(this);
         } else if (transferInterchange instanceof InterchangeProfileWD) {
             connection = new WiFiDirectConnection(this, ((InterchangeProfileWD) transferInterchange).MAC);
+        } else if (transferInterchange instanceof InterchangeProfileOnline) {
+            connection = new OnlineConnection(this, ((InterchangeProfileOnline) transferInterchange).URL);
         } else {
             throw new UnsupportedOperationException("transferInterchange not supported");
         }

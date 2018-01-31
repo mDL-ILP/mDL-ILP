@@ -16,12 +16,14 @@ import com.ul.ts.products.mdlholder.connection.TransferInterface;
 import com.ul.ts.products.mdlholder.connection.bluetooth.BTTransfer;
 import com.ul.ts.products.mdlholder.connection.descriptor.TransferInfo;
 import com.ul.ts.products.mdlholder.connection.hce.NFCTransfer;
+import com.ul.ts.products.mdlholder.connection.online.OnlineTransfer;
 import com.ul.ts.products.mdlholder.connection.wifi.WiFiTransfer;
 
 public class ConnectionPreference {
     public static final String BLUETOOTH = "Bluetooth";
     public static final String WIFI_DIRECT = "WiFiDirect";
     public static final String NFC = "NFC";
+    public static final String ONLINE = "ONLINE";
     public static final String CONNECTION_PREFERENCE_KEY = "connection_preference";
 
     public static String getCurrentConnectionPreference(Context context) {
@@ -43,6 +45,8 @@ public class ConnectionPreference {
                 return new WiFiTransfer(activity, transferInfo, mdlSim);
             case NFC:
                 return new NFCTransfer(activity, transferInfo, mdlSim);
+            case ONLINE:
+                return new OnlineTransfer(activity, transferInfo, mdlSim);
             default:
                 throw new RuntimeException("Transfer method " + method + " is not supported.");
         }
@@ -55,7 +59,8 @@ public class ConnectionPreference {
         switch (currentMethod) {
             case WIFI_DIRECT: newMethod = BLUETOOTH; break;
             case BLUETOOTH: newMethod = NFC; break;
-            case NFC: newMethod = WIFI_DIRECT; break;
+            case NFC: newMethod = ONLINE; break;
+            case ONLINE: newMethod = WIFI_DIRECT; break;
         }
 
         setCurrentConnectionPreference(context, newMethod);
@@ -71,9 +76,17 @@ public class ConnectionPreference {
             return checkBluetoothPrerequisites(context);
         } else if (value == NFC) {
             return true;
+        } else if (value == ONLINE) {
+            /* maybe check if the phone is online? */
+            return true;
         } else {
             return false;
         }
+    }
+
+    // TODO: remove this function, meant as temoprary hack
+    public static boolean isOnline(Context context) {
+        return (getCurrentConnectionPreference(context) == ONLINE );
     }
 
     public static boolean checkBluetoothPrerequisites(Context context) {

@@ -144,8 +144,14 @@ abstract class LoadLicenceTask extends AsyncTask<Void, Integer, DrivingLicence> 
     protected void onPostExecute(DrivingLicence licence)
     {
         steps.add(new TimeMeasurement(System.nanoTime(), 100, "onPostExecute"));
+
         // close the progress progressDialog
-        apduInterface.close();
+        // todo: the catch was specifcally added to deal with the only case, where no apduinterface is present. This should be fixed.
+        try {
+            apduInterface.close();
+        } catch (Exception e) {
+            Log.e(TAG, "Error occurred:", e);
+        }
 
         progressDialog.dismiss();
         if (activity.connection != null) activity.connection.shutdown();
@@ -162,5 +168,7 @@ abstract class LoadLicenceTask extends AsyncTask<Void, Integer, DrivingLicence> 
             previous = t;
         }
         Log.d(TAG+ ".timing", "TIMING DATA END");
+
+        activity.isDoneLoading = true;
     }
 }
