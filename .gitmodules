@@ -1,0 +1,6 @@
+[submodule "apdukit-swift"]
+	path = apdukit-swift
+	url = git@github.com:mDL-ILP/apdukit-swift.git
+[submodule "apdukit-java"]
+	path = apdukit-java
+	url = git@github.com:mDL-ILP/apdukit-java.git
